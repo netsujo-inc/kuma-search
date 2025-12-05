@@ -1,0 +1,38 @@
+# 熊検知システム設定ファイル
+# このファイルを config.yaml にリネームして使用してください
+
+# デバイス識別
+device_id: "cam-minami-uonuma-001"
+
+# 設置位置（WGS84座標）
+latitude: 37.0650
+longitude: 138.8800
+
+# モデル設定
+model_path: "models/bear_detector.tflite"
+labels_path: "models/labels.txt"
+
+# サーバー接続
+server_url: "https://your-server.example.com"
+
+# 検知設定
+detection_threshold: 0.6  # 60%以上の信頼度で検知とみなす
+target_classes:
+  - "bear"
+  - "クマ"
+  - "ツキノワグマ"
+  - "ヒグマ"
+
+# キャプチャ設定
+capture_interval: 1.0  # 秒（1秒間隔で検知）
+camera_resolution: [640, 480]
+
+# 画像保存
+image_save_dir: "captures"
+
+# ハードウェアアクセラレーション
+use_coral: false  # Coral Edge TPU を使用する場合は true
+
+# ネットワーク設定
+retry_interval: 30  # 通信失敗時のリトライ間隔（秒）
+offline_buffer_size: 1000  # オフライン時に保持する検知結果数

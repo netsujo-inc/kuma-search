@@ -1,0 +1,28 @@
+# 熊検知APIサーバー依存関係
+# Python 3.10+
+
+# Webフレームワーク
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# データ検証
+pydantic>=2.5.0
+
+# HTTPクライアント（OSM連携用）
+httpx>=0.25.0
+requests>=2.31.0
+
+# データベース（本番環境では PostgreSQL + asyncpg を推奨）
+# asyncpg>=0.29.0
+# SQLAlchemy>=2.0.0
+
+# 地理空間処理
+shapely>=2.0.0
+pyproj>=3.6.0
+
+# オプション: 通知連携
+# python-line-bot-sdk>=3.0.0
+# slack-sdk>=3.23.0
+
+# 開発用
+python-dotenv>=1.0.0

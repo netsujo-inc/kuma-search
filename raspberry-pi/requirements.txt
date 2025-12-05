@@ -1,0 +1,21 @@
+# 熊検知システム - Raspberry Pi 依存関係
+# Python 3.9+
+
+# カメラ
+picamera2>=0.3.12; platform_machine == "aarch64"
+opencv-python-headless>=4.8.0
+
+# 推論エンジン（いずれか1つ）
+tflite-runtime>=2.13.0
+# または onnxruntime>=1.15.0
+
+# 画像処理
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# 設定・通信
+PyYAML>=6.0
+requests>=2.31.0
+
+# オプション: Coral Edge TPU
+# pycoral>=2.0.0

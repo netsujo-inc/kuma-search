@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>熊検知マップ - Bear Detection Map</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+            background: #1a1a2e;
+        }
+        
+        #app {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* サイドバー */
+        #sidebar {
+            width: 320px;
+            background: #16213e;
+            color: #e8e8e8;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #0f3460;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+            border-bottom: 1px solid #0f3460;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-header h1::before {
+            content: '🐻';
+            font-size: 1.6rem;
+        }
+        
+        /* ステータスパネル */
+        .status-panel {
+            padding: 15px 20px;
+            border-bottom: 1px solid #0f3460;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .status-item {
+            background: #1a1a2e;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .status-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e94560;
+        }
+        
+        .status-value.warning {
+            color: #ffc107;
+        }
+        
+        .status-value.safe {
+            color: #4caf50;
+        }
+        
+        .status-label {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        /* 検知リスト */
+        .detection-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .detection-item {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+        
+        .detection-item:hover {
+            background: #222244;
+            transform: translateX(4px);
+        }
+        
+        .detection-item.critical {
+            border-left-color: #e94560;
+        }
+        
+        .detection-item.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .detection-item.info {
+            border-left-color: #4caf50;
+        }
+        
+        .detection-time {
+            font-size: 0.85rem;
+            color: #e94560;
+            font-weight: 600;
+        }
+        
+        .detection-location {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .detection-confidence {
+            display: inline-block;
+            background: #0f3460;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-top: 6px;
+        }
+        
+        /* フィルター */
+        .filter-panel {
+            padding: 15px 20px;
+            border-top: 1px solid #0f3460;
+        }
+        
+        .filter-panel label {
+            display: block;
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        
+        .filter-panel select {
+            width: 100%;
+            padding: 8px;
+            background: #1a1a2e;
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            color: #e8e8e8;
+        }
+        
+        /* 地図コンテナ */
+        #map-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        /* 凡例 */
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            right: 10px;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            color: #e8e8e8;
+            font-size: 0.8rem;
+            z-index: 1000;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        
+        .legend-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+        
+        .legend-icon.critical { background: #e94560; }
+        .legend-icon.warning { background: #ffc107; }
+        .legend-icon.info { background: #4caf50; }
+        
+        /* アラートバナー */
+        .alert-banner {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #e94560 0%, #c23616 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+            display: none;
+        }
+        
+        .alert-banner.show {
+            display: block;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Leaflet カスタムマーカー */
+        .bear-marker {
+            background: none;
+            border: none;
+        }
+        
+        .bear-marker-inner {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: bounce 0.5s ease-out;
+        }
+        
+        .bear-marker-inner.critical {
+            background: #e94560;
+            animation: pulse-marker 1s infinite;
+        }
+        
+        .bear-marker-inner.warning {
+            background: #ffc107;
+        }
+        
+        .bear-marker-inner.info {
+            background: #4caf50;
+        }
+        
+        @keyframes pulse-marker {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 2px 10px rgba(233, 69, 96, 0.5);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 2px 20px rgba(233, 69, 96, 0.8);
+            }
+        }
+        
+        @keyframes bounce {
+            0% { transform: translateY(-20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* ポップアップスタイル */
+        .leaflet-popup-content-wrapper {
+            background: #16213e;
+            color: #e8e8e8;
+            border-radius: 8px;
+        }
+        
+        .leaflet-popup-tip {
+            background: #16213e;
+        }
+        
+        .popup-content h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .popup-content p {
+            margin: 5px 0;
+            font-size: 0.85rem;
+        }
+        
+        .popup-content .label {
+            color: #888;
+        }
+        
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            #app {
+                flex-direction: column;
+            }
+            
+            #sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+            }
+            
+            .status-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .detection-list {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- サイドバー -->
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <h1>熊検知マップ</h1>
+            </div>
+            
+            <div class="status-panel">
+                <h3 style="font-size: 0.9rem; color: #888;">検知状況</h3>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-value" id="active-1h">-</div>
+                        <div class="status-label">直近1時間</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value warning" id="active-24h">-</div>
+                        <div class="status-label">24時間</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value safe" id="online-devices">-</div>
+                        <div class="status-label">稼働中</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value" id="last-update">-</div>
+                        <div class="status-label">最終更新</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detection-list" id="detection-list">
+                <!-- 検知リストがここに動的に追加される -->
+                <div style="text-align: center; padding: 20px; color: #888;">
+                    読み込み中...
+                </div>
+            </div>
+            
+            <div class="filter-panel">
+                <label for="time-filter">表示期間</label>
+                <select id="time-filter">
+                    <option value="1">直近1時間</option>
+                    <option value="6">直近6時間</option>
+                    <option value="24" selected>直近24時間</option>
+                    <option value="72">直近3日間</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- 地図 -->
+        <div id="map-container">
+            <div id="map"></div>
+            
+            <!-- アラートバナー -->
+            <div class="alert-banner" id="alert-banner">
+                ⚠️ 直近30分以内に熊が検知されています！
+            </div>
+            
+            <!-- 凡例 -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-icon critical"></div>
+                    <span>30分以内</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon warning"></div>
+                    <span>2時間以内</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon info"></div>
+                    <span>それ以前</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    
+    <script>
+        // =================================================================
+        // 設定
+        // =================================================================
+        const CONFIG = {
+            // APIエンドポイント（実際の環境に合わせて変更）
+            API_BASE: window.location.origin,
+            
+            // デフォルトの地図中心（南魚沼市）
+            DEFAULT_CENTER: [37.065, 138.88],
+            DEFAULT_ZOOM: 12,
+            
+            // 更新間隔（ミリ秒）
+            UPDATE_INTERVAL: 30000,
+            
+            // OSMタイルサーバー
+            TILE_URL: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            TILE_ATTRIBUTION: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        };
+        
+        // =================================================================
+        // グローバル変数
+        // =================================================================
+        let map;
+        let markerCluster;
+        let detections = [];
+        
+        // =================================================================
+        // 初期化
+        // =================================================================
+        function initMap() {
+            // Leaflet地図を初期化
+            map = L.map('map', {
+                center: CONFIG.DEFAULT_CENTER,
+                zoom: CONFIG.DEFAULT_ZOOM,
+                zoomControl: true
+            });
+            
+            // OSMタイルを追加
+            L.tileLayer(CONFIG.TILE_URL, {
+                attribution: CONFIG.TILE_ATTRIBUTION,
+                maxZoom: 19
+            }).addTo(map);
+            
+            // マーカークラスターを初期化
+            markerCluster = L.markerClusterGroup({
+                maxClusterRadius: 50,
+                spiderfyOnMaxZoom: true,
+                showCoverageOnHover: false,
+                iconCreateFunction: function(cluster) {
+                    const count = cluster.getChildCount();
+                    let urgencyClass = 'info';
+                    
+                    // クラスター内の最も緊急度の高いマーカーを確認
+                    cluster.getAllChildMarkers().forEach(marker => {
+                        if (marker.options.urgency === 'critical') {
+                            urgencyClass = 'critical';
+                        } else if (marker.options.urgency === 'warning' && urgencyClass !== 'critical') {
+                            urgencyClass = 'warning';
+                        }
+                    });
+                    
+                    return L.divIcon({
+                        html: `<div class="bear-marker-inner ${urgencyClass}">${count}</div>`,
+                        className: 'bear-marker',
+                        iconSize: [40, 40]
+                    });
+                }
+            });
+            
+            map.addLayer(markerCluster);
+        }
+        
+        // =================================================================
+        // データ取得
+        // =================================================================
+        async function fetchDetections(hours = 24) {
+            try {
+                const response = await fetch(
+                    `${CONFIG.API_BASE}/api/detections?hours=${hours}&status=active`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.features || [];
+            } catch (error) {
+                console.error('検知データの取得に失敗:', error);
+                
+                // デモ用のサンプルデータ
+                return generateDemoData();
+            }
+        }
+        
+        async function fetchSummary() {
+            try {
+                const response = await fetch(`${CONFIG.API_BASE}/api/detections/summary`);
+                if (!response.ok) throw new Error('Summary fetch failed');
+                return await response.json();
+            } catch (error) {
+                return {
+                    active_detections_1h: 0,
+                    active_detections_24h: detections.length,
+                    online_devices: 0
+                };
+            }
+        }
+        
+        // デモデータ生成
+        function generateDemoData() {
+            const now = new Date();
+            const demoPoints = [
+                { lat: 37.070, lon: 138.875, age: 15, confidence: 0.92 },
+                { lat: 37.055, lon: 138.890, age: 45, confidence: 0.85 },
+                { lat: 37.080, lon: 138.860, age: 90, confidence: 0.78 },
+                { lat: 37.062, lon: 138.905, age: 180, confidence: 0.88 },
+                { lat: 37.045, lon: 138.870, age: 300, confidence: 0.72 }
+            ];
+            
+            return demoPoints.map((point, i) => {
+                const timestamp = new Date(now - point.age * 60000);
+                const urgency = point.age < 30 ? 'critical' : point.age < 120 ? 'warning' : 'info';
+                
+                return {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [point.lon, point.lat]
+                    },
+                    properties: {
+                        id: i + 1,
+                        timestamp: timestamp.toISOString(),
+                        device_id: `cam-demo-${String(i + 1).padStart(3, '0')}`,
+                        confidence: point.confidence,
+                        class_name: 'bear',
+                        urgency: urgency,
+                        age_minutes: point.age
+                    }
+                };
+            });
+        }
+        
+        // =================================================================
+        // UI更新
+        // =================================================================
+        function updateMarkers(features) {
+            markerCluster.clearLayers();
+            
+            features.forEach(feature => {
+                const coords = feature.geometry.coordinates;
+                const props = feature.properties;
+                
+                // カスタムアイコン
+                const icon = L.divIcon({
+                    html: `<div class="bear-marker-inner ${props.urgency}">🐻</div>`,
+                    className: 'bear-marker',
+                    iconSize: [36, 36],
+                    iconAnchor: [18, 18]
+                });
+                
+                // マーカー作成
+                const marker = L.marker([coords[1], coords[0]], {
+                    icon: icon,
+                    urgency: props.urgency
+                });
+                
+                // ポップアップ
+                const timestamp = new Date(props.timestamp);
+                const popupContent = `
+                    <div class="popup-content">
+                        <h3>🐻 熊検知情報</h3>
+                        <p><span class="label">検知時刻:</span> ${timestamp.toLocaleString('ja-JP')}</p>
+                        <p><span class="label">経過時間:</span> ${props.age_minutes}分前</p>
+                        <p><span class="label">信頼度:</span> ${(props.confidence * 100).toFixed(0)}%</p>
+                        <p><span class="label">デバイス:</span> ${props.device_id}</p>
+                        <p><span class="label">座標:</span> ${coords[1].toFixed(5)}, ${coords[0].toFixed(5)}</p>
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+                markerCluster.addLayer(marker);
+            });
+        }
+        
+        function updateDetectionList(features) {
+            const listEl = document.getElementById('detection-list');
+            
+            if (features.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #888;">
+                        検知情報はありません
+                    </div>
+                `;
+                return;
+            }
+            
+            // 時間順にソート（新しい順）
+            const sorted = [...features].sort((a, b) => 
+                new Date(b.properties.timestamp) - new Date(a.properties.timestamp)
+            );
+            
+            listEl.innerHTML = sorted.map(feature => {
+                const props = feature.properties;
+                const coords = feature.geometry.coordinates;
+                const timestamp = new Date(props.timestamp);
+                
+                return `
+                    <div class="detection-item ${props.urgency}" 
+                         onclick="focusDetection(${coords[1]}, ${coords[0]})">
+                        <div class="detection-time">
+                            ${props.age_minutes < 60 
+                                ? `${props.age_minutes}分前` 
+                                : `${Math.floor(props.age_minutes / 60)}時間前`}
+                        </div>
+                        <div class="detection-location">
+                            ${coords[1].toFixed(4)}, ${coords[0].toFixed(4)}
+                        </div>
+                        <span class="detection-confidence">
+                            信頼度: ${(props.confidence * 100).toFixed(0)}%
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateSummary(summary) {
+            document.getElementById('active-1h').textContent = summary.active_detections_1h || 0;
+            document.getElementById('active-24h').textContent = summary.active_detections_24h || 0;
+            document.getElementById('online-devices').textContent = summary.online_devices || 0;
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString('ja-JP', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // アラートバナーの表示制御
+            const alertBanner = document.getElementById('alert-banner');
+            if (summary.active_detections_1h > 0) {
+                alertBanner.classList.add('show');
+            } else {
+                alertBanner.classList.remove('show');
+            }
+        }
+        
+        // 検知地点にフォーカス
+        function focusDetection(lat, lon) {
+            map.setView([lat, lon], 15);
+            
+            // 該当するマーカーのポップアップを開く
+            markerCluster.eachLayer(marker => {
+                const markerLatLng = marker.getLatLng();
+                if (Math.abs(markerLatLng.lat - lat) < 0.0001 && 
+                    Math.abs(markerLatLng.lng - lon) < 0.0001) {
+                    marker.openPopup();
+                }
+            });
+        }
+        
+        // =================================================================
+        // 更新処理
+        // =================================================================
+        async function update() {
+            const hours = document.getElementById('time-filter').value;
+            
+            // 検知データを取得
+            detections = await fetchDetections(hours);
+            
+            // UIを更新
+            updateMarkers(detections);
+            updateDetectionList(detections);
+            
+            // サマリーを更新
+            const hasCritical = detections.some(f => f.properties.urgency === 'critical');
+            updateSummary({
+                active_detections_1h: detections.filter(f => f.properties.age_minutes < 60).length,
+                active_detections_24h: detections.length,
+                online_devices: new Set(detections.map(f => f.properties.device_id)).size
+            });
+        }
+        
+        // =================================================================
+        // イベントリスナー
+        // =================================================================
+        document.getElementById('time-filter').addEventListener('change', update);
+        
+        // =================================================================
+        // 起動
+        // =================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            update();
+            
+            // 定期更新
+            setInterval(update, CONFIG.UPDATE_INTERVAL);
+        });
+    </script>
+</body>
+</html>
