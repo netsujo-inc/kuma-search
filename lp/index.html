@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>くま検知システム - AI × ブロックチェーン × OpenStreetMapで地域の安全を守る</title>
+  <meta name="description" content="AIカメラによるリアルタイム熊検知と、ブロックチェーン技術を活用した信頼性の高い情報共有プラットフォーム。地域社会の安全を共に創ります。">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <div class="nav-logo">
+        <span class="logo-icon">🐻</span>
+        <span class="logo-text">くま検知システム</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#problem">課題</a></li>
+        <li><a href="#solution">解決策</a></li>
+        <li><a href="#technology">技術</a></li>
+        <li><a href="#ecosystem">エコシステム</a></li>
+        <li><a href="#contact">お問い合わせ</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="メニュー">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          リアルタイム<br>
+          <span class="highlight">くま検知</span>システム
+        </h1>
+        <p class="hero-subtitle">
+          OpenStreetMap × Blockchain × AI/IoT<br>
+          持続可能な地域安全網の構築
+        </p>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-number">200+</span>
+            <span class="stat-label">年間人身被害件数（2023年）</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">過去最多</span>
+            <span class="stat-label">出没件数</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">全国</span>
+            <span class="stat-label">被害範囲拡大</span>
+          </div>
+        </div>
+        <a href="#contact" class="cta-button">お問い合わせ</a>
+      </div>
+      <div class="hero-illustration">
+        <img src="images/hero-bear.svg" alt="熊検知のイメージ">
+      </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="section problem-section">
+      <div class="container">
+        <h2 class="section-title">深刻化する社会問題</h2>
+        <p class="section-subtitle">市街地への熊出没が急増しています</p>
+
+        <div class="problem-grid">
+          <div class="problem-card">
+            <div class="problem-icon">⚠️</div>
+            <h3>現状</h3>
+            <p>熊が農村部だけでなく市街地にも頻繁に出没。人と熊の生活圏が重複し、遭遇リスクが急増しています。</p>
+          </div>
+          <div class="problem-card">
+            <div class="problem-icon">🚨</div>
+            <h3>被害の実態</h3>
+            <p>住民への襲撃など深刻な人的被害が発生。農作物への甚大な被害により地域経済にも打撃を与えています。</p>
+          </div>
+          <div class="problem-card">
+            <div class="problem-icon">📊</div>
+            <h3>社会的インパクト</h3>
+            <p>住民の不安増大、地域経済への打撃。早急な対策が求められる喫緊の社会課題です。</p>
+          </div>
+        </div>
+
+        <div class="comparison">
+          <div class="comparison-item comparison-before">
+            <h3>❌ これまでの課題</h3>
+            <ul>
+              <li>
+                <strong>人力頼りの発見</strong>
+                <p>熊の第一発見者の多くは地域住民。専門家ではない一般市民が危険な役割を担っています。</p>
+              </li>
+              <li>
+                <strong>遭遇リスク</strong>
+                <p>発見者自身が熊と至近距離で遭遇する大きなリスクを伴います。</p>
+              </li>
+              <li>
+                <strong>情報伝達の遅延</strong>
+                <p>口頭・電話による伝達にタイムラグが発生。被害拡大の原因に。</p>
+              </li>
+            </ul>
+          </div>
+          <div class="comparison-arrow">→</div>
+          <div class="comparison-item comparison-after">
+            <h3>✓ 目指す安全の形</h3>
+            <ul>
+              <li>
+                <strong>テクノロジーが代行</strong>
+                <p>危険な「最初の目撃」をAIカメラが代行。人間は安全な場所にいられます。</p>
+              </li>
+              <li>
+                <strong>リアルタイム通知</strong>
+                <p>住民は安全な場所でリアルタイムに情報を得て、即座に避難行動をとれます。</p>
+              </li>
+              <li>
+                <strong>記録と信頼性</strong>
+                <p>検知データを改ざん不可能な形で記録し、信頼性を担保しながらコストダウン。</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="section solution-section">
+      <div class="container">
+        <h2 class="section-title">エッジAIとブロックチェーンによる自動検知＆通知</h2>
+
+        <div class="solution-flow">
+          <div class="flow-item">
+            <div class="flow-icon">📷</div>
+            <h3>AIの監視の目</h3>
+            <p>カメラ付きIoTデバイス（Raspberry Pi 5 + カメラモジュール + AIアクセラレータ）を戦略的に設置</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="flow-icon">🎯</div>
+            <h3>リアルタイム検知</h3>
+            <p>動画・画像からAI（YOLO等）が熊を自動識別。エッジで高速処理</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="flow-icon">🔔</div>
+            <h3>即時通知</h3>
+            <p>検知情報は瞬時にネットワークを通じて住民・自治体・既存の熊情報共有サービス等へ共有</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="flow-icon">⛓️</div>
+            <h3>堅牢＆安価なデータ基盤</h3>
+            <p>検知データはブロックチェーンに記録することで安価で信頼性を担保した運用を実現</p>
+          </div>
+        </div>
+
+        <div class="system-architecture">
+          <h3>システム構成とデータフロー</h3>
+          <div class="architecture-diagram">
+            <div class="arch-box">
+              <div class="arch-header">EDGE DEVICE</div>
+              <div class="arch-content">
+                <p>📷 カメラ入力</p>
+                <p>🧠 AI推論 (YOLO)</p>
+                <p>🐻 熊検知!</p>
+              </div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box">
+              <div class="arch-header">SERVER / DB</div>
+              <div class="arch-content">
+                <p>📥 検知情報受信</p>
+                <p>💾 一時保存</p>
+                <p>🔄 配信処理</p>
+              </div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box">
+              <div class="arch-header">BLOCKCHAIN</div>
+              <div class="arch-content">
+                <p>⛓️ Metadata記録</p>
+                <p>🔒 耐改ざん性</p>
+                <p>📊 透明性確保</p>
+              </div>
+            </div>
+            <div class="arch-arrow">→</div>
+            <div class="arch-box">
+              <div class="arch-header">NOTIFICATION</div>
+              <div class="arch-content">
+                <p>👨‍👩‍👧 住民へ即時アラート</p>
+                <p>🏛️ 自治体が状況把握</p>
+                <p>📥 他サービス連携</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="section tech-section">
+      <div class="container">
+        <h2 class="section-title">地理情報を活用した効率的なデバイス配置戦略</h2>
+
+        <div class="tech-illustration">
+          <img src="images/map-illustration.svg" alt="地図を使った配置戦略">
+        </div>
+
+        <div class="placement-steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>境界領域の特定</h3>
+            <p>山間部と市街地の境目、河川沿いなど、熊の侵入経路となりやすいエリアをOSMデータや国土地理院の地図データから抽出</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>インフラ協力の交渉</h3>
+            <p>上記エリアにある建物（民家、倉庫等）をピックアップし、設置候補として選定</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Win-Winの構築</h3>
+            <p>電源・ネットワークを借り受け、設置・維持コストを劇的に低減（オーナーには安全情報で還元）</p>
+          </div>
+        </div>
+
+        <div class="open-tech">
+          <h3>オープンな技術が拓くソーシャルイノベーション</h3>
+          <p class="open-tech-subtitle">「社会的に重要だがマネタイズが難しい」課題への挑戦</p>
+
+          <div class="tech-cards">
+            <div class="tech-card">
+              <div class="tech-card-icon">🗺️</div>
+              <h4>OPEN DATA</h4>
+              <p class="tech-name">OpenStreetMap</p>
+              <p>誰でも使える地理情報で戦略を最適化。コミュニティ主導のデータ活用。</p>
+            </div>
+            <div class="tech-card">
+              <div class="tech-card-icon">⛓️</div>
+              <h4>OPEN SYSTEM</h4>
+              <p class="tech-name">Symbol Blockchain</p>
+              <p>堅牢で透明性の高い情報基盤やWebSocketでの通知基盤を低コストで利用。</p>
+            </div>
+            <div class="tech-card">
+              <div class="tech-card-icon">💱</div>
+              <h4>OPEN FINANCE</h4>
+              <p class="tech-name">Stablecoins</p>
+              <p>滑らかな価値の移転で活動を維持。マイクロペイメントの実現。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ecosystem Section -->
+    <section id="ecosystem" class="section ecosystem-section">
+      <div class="container">
+        <h2 class="section-title">小規模スタートでも継続・拡大可能なエコシステム</h2>
+
+        <div class="pillars">
+          <div class="pillar">
+            <div class="pillar-icon">💰</div>
+            <h3>PILLAR 1: 無駄のない資金活用</h3>
+            <div class="pillar-content">
+              <div class="pillar-item">
+                <h4>ステーブルコイン活用</h4>
+                <p>手数料がほぼゼロの「JPYC」等を活用。従来の決済システムでは実現できなかった少額送金を可能に。</p>
+              </div>
+              <div class="pillar-item">
+                <h4>マイクロ寄付モデル</h4>
+                <p>少額決済による寄付を募り、デバイス購入や維持費に充当。自治体予算に依存しすぎない運営。</p>
+              </div>
+            </div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon">🌐</div>
+            <h3>PILLAR 2: 参加型ネットワーク構築</h3>
+            <div class="pillar-content">
+              <div class="pillar-item">
+                <h4>デバイスの民主化</h4>
+                <p>誰でも構築できる仕様を公開。「FlightRadar」モデルのように自発的なデバイス設置協力を促進。</p>
+              </div>
+              <div class="pillar-item">
+                <h4>インセンティブ設計</h4>
+                <p>デバイス提供者（協力者）には、詳細なアラート情報へのアクセス権などの優遇措置を提供。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ecosystem-message">
+          <p>小さく着実にスタートし、健全な形で自律的に拡大していく新たな社会課題解決モデル</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact-section">
+      <div class="container">
+        <h2 class="section-title">地域社会の安全を、共に創る。</h2>
+        <p class="contact-message">
+          <strong>AI</strong>による「人の代替」と、<strong>ブロックチェーン</strong>による「信頼の担保」で、<br>
+          <span class="highlight">熊被害のない安全な社会</span>を目指します。
+        </p>
+
+        <div class="partner-cards">
+          <div class="partner-card">
+            <div class="partner-icon">🏛️</div>
+            <h3>自治体様</h3>
+            <p>パイロット地域募集</p>
+          </div>
+          <div class="partner-card">
+            <div class="partner-icon">🔧</div>
+            <h3>技術パートナー様</h3>
+            <p>共同開発・実装</p>
+          </div>
+          <div class="partner-card">
+            <div class="partner-icon">👥</div>
+            <h3>地域の皆様</h3>
+            <p>設置協力・フィードバック</p>
+          </div>
+        </div>
+
+        <div class="contact-info">
+          <p class="company-name">Netsujo株式会社</p>
+          <a href="mailto:info@netsujo.co.jp" class="contact-button">お問い合わせはこちら</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <span class="logo-icon">🐻</span>
+          <span class="logo-text">くま検知システム</span>
+        </div>
+        <p class="copyright">© 2024 Netsujo Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
